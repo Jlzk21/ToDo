@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:group2/db/database.dart';
-import 'package:group2/db/model/model.dart';
+import 'package:group2/model/model.dart';
 import 'package:intl/intl.dart';
 import 'package:undo/undo.dart';
 

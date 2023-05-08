@@ -1,6 +1,6 @@
 /* Copyright 2023, Julius Biascan */
 
-import 'package:group2/db/model/model.dart';
+import 'package:group2/model/model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:io' as io;

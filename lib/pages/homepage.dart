@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group2/db/database.dart';
-import 'package:group2/db/model/model.dart';
+import 'package:group2/model/model.dart';
 import 'package:intl/intl.dart';
 import 'package:is_first_run/is_first_run.dart';
 import 'package:group2/pages/viewedit.dart';
