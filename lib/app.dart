@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:group2/pages/addnote.dart';
 import 'package:group2/pages/homepage.dart';
+import 'package:group2/pages/viewedit.dart';
 
 
 class Group2Application extends StatelessWidget {
@@ -21,7 +21,7 @@ class Group2Application extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/addnote': (context) => const AddNote(),
+        '/addnote': (context) => const ViewEditNote(),
       },
     );
   }

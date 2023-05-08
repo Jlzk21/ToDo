@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group2/db/database.dart';
 import 'package:group2/db/model/model.dart';
-import 'package:group2/pages/updatenote.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:is_first_run/is_first_run.dart';
+import 'package:group2/pages/viewedit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,32 +21,27 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     dbHelper = DatabaseHelper();
-    isFirstRun();
     loadListData();
-  }
-
-  isFirstRun() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('repeat', false);
-    final bool? repeat = prefs.getBool('repeat');
-    if (repeat! == false){
-      dbHelper!.insert(ToDoModel(
-          title: "Hola!",
-          desc: "This is our Group 2 Simple ToDo App running on flutter using Sqflite dependencies, this Database is working on mobile devices only.",
-          dateandtime: DateFormat('yMd')
-              .add_jm()
-              .format(DateTime.now())
-              .toString()));
-      await prefs.setBool('repeat', true);
-    }
   }
 
   loadListData() async {
     dataList = dbHelper!.getTodoList();
   }
 
+  isFirstRun() async {
+    if (await IsFirstRun.isFirstRun()) {
+      dbHelper!.insert(ToDoModel(
+          title: "Hola!",
+          desc:
+              "This is our Group 2 Simple ToDo App running on flutter using Sqflite dependencies, this Database is working on mobile devices only.",
+          dateandtime:
+              DateFormat('yMd').add_jm().format(DateTime.now()).toString()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    isFirstRun();
 
     return Scaffold(
       appBar: AppBar(
@@ -131,80 +125,43 @@ class _HomePageState extends State<HomePage> {
 
                           return null;
                         },
-                        child: Container(
-                          margin: const EdgeInsets.all(5.0),
-                          decoration: const BoxDecoration(
-                              color: Colors.brown,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
-                                )
-                              ]),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.all(10.0),
-                                title: Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    todoTitle,
-                                    style: const TextStyle(fontSize: 19),
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  todoDesc,
-                                  style: const TextStyle(fontSize: 17),
-                                ),
-                              ),
-                              const Divider(
-                                color: Colors.black,
-                                thickness: 0.8,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 3, horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      todoDateAndTime,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle: FontStyle.italic),
-                                    ),
-                                    Tooltip(
-                                      message: "Edit Note",
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      UpdateNote(
-                                                        todoId: todoId,
-                                                        todoTitle: todoTitle,
-                                                        todoDesc: todoDesc,
-                                                        todoDateTime:
-                                                            todoDateAndTime,
-                                                      )));
-                                        },
-                                        child: const Icon(
-                                          Icons.edit_note,
-                                          size: 28,
-                                          color: Colors.white,
-                                        ),
+                        child: Tooltip(
+                          message: "Edit/View Note",
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ViewEditNote(
+                                            todoId: todoId,
+                                            todoTitle: todoTitle,
+                                            todoDesc: todoDesc,
+                                            todoDateTime: todoDateAndTime,
+                                            todoEdit: true,
+                                          )));
+                            },
+                            child: Card(
+                              margin: const EdgeInsets.all(5.0),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    contentPadding: const EdgeInsets.all(10.0),
+                                    title: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: Text(
+                                        todoTitle,
+                                        style: const TextStyle(fontSize: 19),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
+                                    ),
+                                    subtitle: Text(
+                                      todoDateAndTime,
+                                      style: const TextStyle(fontSize: 17),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -217,7 +174,16 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.popAndPushNamed(context, '/addnote');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ViewEditNote(
+                    todoId: 0,
+                    todoTitle: '',
+                    todoDesc: '',
+                    todoDateTime: '',
+                    todoEdit: false,
+                  )));
         },
       ),
     );
